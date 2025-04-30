@@ -10,7 +10,7 @@ local client_subfolder = "assets/"
 
 local function trigger_copy_chrome_css_changes()
 
-	local cmd = abs_path .. nifty_path .. 'buildit/buildit copy_chrome_css_changes '
+	local cmd = abs_path .. nifty_path .. 'builditsrc/run_buildit copy_chrome_css_changes '
 
 	vim.fn.jobstart(cmd, {
 		on_exit = function()
@@ -25,14 +25,85 @@ end
 
 
 
---[[
-local function aideron()
-	local f = vim.api.nvim_buf_get_name(0)
-	vim.cmd("vsplit | term python -m aider " .. f)
-end
---]]
+local function aideron_add_current_buffer(isarchitect)
 
---vim.keymap.set("n", "g;", aideron, { desc = "Aider Open" })
+	local api = require("nvim_aider").api
+	api.add_current_file()
+
+	-- local f = vim.api.nvim_buf_get_name(0)
+	--
+	-- local cmdstr = "vsplit | term /Users/dave/Code/aider/aider_run "
+	--
+	-- if isarchitect then
+	-- 	cmdstr = cmdstr .. "-a "
+	-- end
+	--
+	-- cmdstr = cmdstr .. f
+	-- vim.cmd(cmdstr)
+end
+
+
+local function aideron_read_conventions(conventionfilename)
+	print("aideron_read_conventions " .. conventionfilename)
+	local api = require("nvim_aider").api
+    api.add_read_only_file("/Users/dave/Code/aider/conventions/" .. conventionfilename .. ".md")
+
+
+	-- local f = vim.api.nvim_buf_get_name(0)
+	-- if string.find(f, "nifty/client") or string.find(f, "xenclient") or string.find(f, "pwtclient") then
+	-- 	api.add_read_only_file("/Users/dave/Code/aider/conventions/CONVENTION_CLIENT.md")
+	--    end
+	--
+	-- if string.find(f, "nifty/server") or string.find(f, "xenserver") or string.find(f, "pwtserver") then
+	-- 	api.add_read_only_file("/Users/dave/Code/aider/conventions/CONVENTION_SERVER.md")
+	--    end
+	--
+	-- if string.find(f, "lazy/components") or string.find(f, "lazy/views") then
+	-- 	api.add_read_only_file("/Users/dave/Code/aider/conventions/CONVENTION_CLIENT_COMPONENT.md")
+	--    end
+end
+
+local function aideron_toggle()
+
+	local api = require("nvim_aider").api
+	api.toggle_terminal()
+
+	-- local f = vim.api.nvim_buf_get_name(0)
+	--
+	-- local cmdstr = "vsplit | term /Users/dave/Code/aider/aider_run "
+	--
+	-- if isarchitect then
+	-- 	cmdstr = cmdstr .. "-a "
+	-- end
+	--
+	-- cmdstr = cmdstr .. f
+	-- vim.cmd(cmdstr)
+end
+
+
+
+vim.keymap.set("n", "GA", function()
+	aideron_toggle()
+end, { desc = "Aider Toggle" })
+
+vim.keymap.set("n", "GARC", function()
+	aideron_read_conventions("CONVENTION_CLIENT")
+end, { desc = "Aider Add Convention Client files" })
+vim.keymap.set("n", "GARCC", function()
+	aideron_read_conventions("CONVENTION_CLIENT_COMPONENT")
+end, { desc = "Aider Add Convention Client Component files" })
+vim.keymap.set("n", "GARS", function()
+	aideron_read_conventions("CONVENTION_SERVER")
+end, { desc = "Aider Add Convention Server files" })
+
+vim.keymap.set("n", "GAJ", function()
+	aideron_add_current_buffer()
+end, { desc = "Start a standard aider REPL" })
+
+vim.keymap.set("n", "GAA", function()
+	aideron(true)
+end, { desc = "Start a architect aider REPL" })
+
 
 
 
@@ -40,14 +111,16 @@ local function map(m, k, v)
 	vim.keymap.set(m, k, v, { silent = true })
 end
 
-vim.opt.tabstop = 4
-vim.opt.expandtab = false
+vim.opt.tabstop     = 4
+vim.opt.expandtab   = false
 vim.opt.softtabstop = 4
-vim.opt.shiftwidth = 4
+vim.opt.shiftwidth  = 4
 
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.g.have_nerd_font = true
+
+vim.opt.autoread = true
 
 vim.opt.number = true
 vim.opt.mouse = "a"
@@ -67,18 +140,18 @@ vim.opt.timeoutlen = 300
 vim.opt.list = true
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldmethod = "indent"
 vim.opt.foldtext = ""
 vim.opt.foldlevel = 99
 vim.opt.foldlevelstart = 99
 vim.opt.foldnestmax = 4
 
+vim.opt.title = false
 vim.opt.wrap = false
 
 vim.opt.cursorline = true
 
-vim.opt.scrolloff = 10
+vim.opt.scrolloff = 2
 
 vim.opt.incsearch = true
 
@@ -86,6 +159,9 @@ vim.opt.splitright = true
 vim.opt.splitbelow = true
 
 --vim.opt.termguicolors = true
+
+vim.keymap.set("n", "<leader>t", "<cmd>tabn<CR>")
+vim.keymap.set("n", "<leader>T", "<cmd>tabp<CR>")
 
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 
@@ -102,6 +178,8 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+
+
 --[[
 vim.keymap.set("n", "g<leader>", function()
 	vim.cmd("wa")
@@ -116,7 +194,7 @@ vim.keymap.set("n", "<leader>c", function()
 	trigger_copy_chrome_css_changes()
 end, { desc = "[C]ss update" })
 
-vim.keymap.set("n", "gp", function()
+vim.keymap.set("n", "GQ", function()
 	vim.cmd("ClangdSwitchSourceHeader")
 end, { desc = "Toggle C Header File" })
 
@@ -172,18 +250,16 @@ require("lazy").setup({
 			pcall(require("telescope").load_extension, "ui-select")
 
 			local builtin = require("telescope.builtin")
-			vim.keymap.set("n", "H", builtin.help_tags, { desc = "[S]earch [H]elp" })
-			vim.keymap.set("n", "gk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
-			vim.keymap.set("n", "gf", builtin.find_files, { desc = "[S]earch [F]iles" })
-			vim.keymap.set("n", "gt", builtin.builtin, { desc = "[S]earch [S]elect Telescope" })
+			vim.keymap.set("n", "gh", builtin.find_files, { desc = "[S]earch [F]iles" })
+			vim.keymap.set("n", "GT", builtin.builtin, { desc = "[S]earch [S]elect Telescope" })
 			vim.keymap.set("n", "gs", builtin.grep_string, { desc = "[S]earch current [W]ord" })
-			vim.keymap.set("n", "gh", builtin.jumplist, { desc = "[S]earch [J]ump list" })
+			-- vim.keymap.set("n", "gh", builtin.jumplist, { desc = "[S]earch [J]ump list" })
 			vim.keymap.set("n", "GS", builtin.live_grep, { desc = "[S]earch by [G]rep" })
 			vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "[D]iagnostic line open float" })
 			vim.keymap.set("n", "<leader>dd", builtin.diagnostics, { desc = "[D]iagnostics all" })
 			--vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
 			--vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-			vim.keymap.set("n", "gb", builtin.buffers, { desc = "[ ] Find existing buffers" })
+			vim.keymap.set("n", "<leader>b", builtin.buffers, { desc = "[ ] Find existing buffers" })
 
 			vim.keymap.set("n", "<leader>s", function()
 				-- You can pass additional configuration to Telescope to change the theme, layout, etc.
@@ -213,13 +289,9 @@ require("lazy").setup({
 						vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
 					end
 
-					map("GD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 					map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
 					map("gr", require("telescope.builtin").lsp_references, "[R]eferences")
-					map("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
-					--map('......<leader>D......', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
-					map("gv", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
-					map("gvv", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
+					map('gt', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
 					map("<leader>r", vim.lsp.buf.rename, "[R]ename")
 				end,
 			})
@@ -325,6 +397,7 @@ require("lazy").setup({
 					{ name = "nvim_lsp" },
 					{ name = "luasnip" },
 					{ name = "path" },
+					-- { name = "codeium" }
 				},
 			})
 		end,
@@ -368,14 +441,15 @@ require("lazy").setup({
 		priority = 1000,
 		init = function()
 			vim.cmd.colorscheme("gruvbox")
-			vim.o.background = "light"
+			--vim.o.background = "light"
+			vim.o.background = "dark"
 			vim.cmd.hi("Comment gui=none")
 		end,
 	},
 
 	{
 		"folke/todo-comments.nvim",
-		event = "VeryLazy",
+		event = "InsertEnter",
 		dependencies = { "nvim-lua/plenary.nvim" },
 		opts = { signs = false },
 	},
@@ -463,12 +537,6 @@ require("lazy").setup({
 		end,
 	},
 
-	--[[
-	{
-		"github/copilot.vim",
-		event = "InsertEnter",
-	},
-	--]]
 
 	{
 		"sindrets/diffview.nvim",
@@ -481,6 +549,10 @@ require("lazy").setup({
 			require("mini.ai").setup({ n_lines = 500 })
 			require("mini.surround").setup()
 			require("mini.pairs").setup()
+			require('mini.align').setup()
+			require("mini.comment").setup()
+			require("mini.completion").setup()
+			require("mini.splitjoin").setup()
 			local statusline = require("mini.statusline")
 			statusline.setup({ use_icons = vim.g.have_nerd_font })
 			statusline.section_location = function()
@@ -515,9 +587,7 @@ require("lazy").setup({
 		keys = {
 			{
 				"<leader>f",
-				function()
-					require("conform").format({ async = true })
-				end,
+				function() require("conform").format({ async = true }) end,
 				mode = "n",
 				desc = "[F]ormat buffer",
 			},
@@ -538,7 +608,7 @@ require("lazy").setup({
 			},
 			formatters = {
 				shfmt = {
-					prepend_args = { "-i", "2" },
+					prepend_args = {"-i", "2"},
 				},
 			},
 		},
@@ -548,93 +618,70 @@ require("lazy").setup({
 	},
 
 
+
+
 	{
 		"zbirenbaum/copilot.lua",
 		cmd = "Copilot",
 		event = "InsertEnter",
 		config = function()
 			require("copilot").setup({
+				copilot_model = "gpt-4o-copilot",
 				suggestion = {
+					enabled = true,
 					auto_trigger = true,
+					hide_during_completion = true,
+					debounce = 75,
+					trigger_on_accept = true,
 					keymap = {
 						accept = "<C-j>",
-						dismiss = false,
-					}
-				}
-				--[[
-				suggestion = { enabled = false },
-				panel      = { enabled = false },
-				--]]
+						accept_word = false,
+						accept_line = false,
+						next = "<M-]>",
+						prev = "<M-[>",
+						dismiss = "<C-]>",
+					},
+				},
 			})
 		end,
 	},
 
-	--[[
-	{
-		"zbirenbaum/copilot-cmp",
-		config = function ()
-			require("copilot_cmp").setup()
-			end
-	},
-	--]]
+
+
 
 	{
-		"yetone/avante.nvim",
-		event = "VeryLazy",
-		lazy = false,
-		version = false, -- set this if you want to always pull the latest change
-		opts = {
-			openai = {
-				endpoint = "https://api.openai.com/v1",
-				model = "o1-preview",
-				timeout = 120000, -- Timeout in milliseconds
-				temperature = 1,
-				max_tokens = 4096,
-				["local"] = false,
-			},
-			mappings = {
-				ask = "gj", -- ask
-				edit = "gl", -- edit
-				refresh = "<leader>j;", -- refresh
-			},
+		"GeorgesAlkhouri/nvim-aider",
+		event = "InsertEnter",
+		cmd = "Aider",
+		-- Example key mappings for common actions:
+		keys = {
+			--[[
+		  { "<leader>a/", "<cmd>Aider toggle<cr>", desc = "Toggle Aider" },
+		  { "<leader>as", "<cmd>Aider send<cr>", desc = "Send to Aider", mode = { "n", "v" } },
+		  { "<leader>ac", "<cmd>Aider command<cr>", desc = "Aider Commands" },
+		  { "<leader>ab", "<cmd>Aider buffer<cr>", desc = "Send Buffer" },
+		  { "<leader>a+", "<cmd>Aider add<cr>", desc = "Add File" },
+		  { "<leader>a-", "<cmd>Aider drop<cr>", desc = "Drop File" },
+		  { "<leader>ar", "<cmd>Aider add readonly<cr>", desc = "Add Read-Only" },
+		  -- Example nvim-tree.lua integration if needed
+		  { "<leader>a+", "<cmd>AiderTreeAddFile<cr>", desc = "Add File from Tree to Aider", ft = "NvimTree" },
+		  { "<leader>a-", "<cmd>AiderTreeDropFile<cr>", desc = "Drop File from Tree from Aider", ft = "NvimTree" },
+		  --]]
 		},
-		-- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
-		build = "make",
-		-- build = "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false" -- for windows
 		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-			"stevearc/dressing.nvim",
-			"nvim-lua/plenary.nvim",
-			"MunifTanjim/nui.nvim",
-			--- The below dependencies are optional,
-			"nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-			{
-				-- support for image pasting
-				"HakonHarnes/img-clip.nvim",
-				event = "VeryLazy",
-				opts = {
-					-- recommended settings
-					default = {
-						embed_image_as_base64 = false,
-						prompt_for_file_name = false,
-						drag_and_drop = {
-							insert_mode = true,
-						},
-						-- required for Windows users
-						use_absolute_path = true,
-					},
-				},
-			},
-		{
-			-- Make sure to set this up properly if you have lazy=true
-			'MeanderingProgrammer/render-markdown.nvim',
-			opts = {
-				file_types = { "markdown", "Avante" },
-			},
-			ft = { "markdown", "Avante" },
+			"folke/snacks.nvim",
 		},
+		config = function()
+			require("nvim_aider").setup({
+				aider_cmd = "aider",
+				args = {
+					"--no-auto-commits",
+					"--vim",
+					"--watch-files"
+				},
+			})
+		end
 	  },
-	}
 })
 
 
@@ -648,40 +695,27 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 			print(data)
 		end
 
+		local filepath = vim.api.nvim_buf_get_name(0)
+
+		local instance_name = os.getenv("NIFTY_INSTANCE") or ""
+		local nifty_dir     = os.getenv("NIFTY_DIR") or ""
+
+		local instance_client_dir = instance_name == "pwt" and ( os.getenv("NIFTY_INSTANCE_PWT_CLIENT_DIR") or "" ) or ( os.getenv("NIFTY_INSTANCE_XEN_CLIENT_DIR") or "" )
+		local instance_server_dir = instance_name == "pwt" and ( os.getenv("NIFTY_INSTANCE_PWT_SERVER_DIR") or "" ) or ( os.getenv("NIFTY_INSTANCE_XEN_SERVER_DIR") or "" )
 
 		local client_dir = os.getenv("NIFTY_INSTANCE_CLIENT_DIR") or ""
 		local server_dir = os.getenv("NIFTY_INSTANCE_SERVER_DIR") or ""
 
-		local pwt_client_actual_dir = "/Users/dave/Code/pwt/client_pwt/"
-		local xen_client_actual_dir = "/Users/dave/Code/xen/client_xen/"
-		local pwt_server_actual_dir = "/Users/dave/Code/pwt/server_pwt/"
-		local xen_server_actual_dir = "/Users/dave/Code/pwt/server_xen/"
+		local in_instance_client = string.find(filepath, instance_client_dir)
+		local in_instance_server = string.find(filepath, instance_server_dir)
+		local in_nifty = string.find(filepath, nifty_dir)
 
-		local filepath = vim.api.nvim_buf_get_name(0)
-		local instance_client_pwt_str_index = string.find(filepath, pwt_client_actual_dir)
-		local instance_server_pwt_str_index = string.find(filepath, pwt_server_actual_dir)
-		local instance_client_xen_str_index = string.find(filepath, xen_client_actual_dir)
-		local instance_server_xen_str_index = string.find(filepath, xen_server_actual_dir)
-
-		local abs_filepath = ""
-
-		if (instance_client_pwt_str_index) then
-			abs_filepath = client_dir .. string.sub(filepath, instance_client_pwt_str_index+string.len(pwt_client_actual_dir))
-
-		elseif (instance_server_pwt_str_index) then
-			abs_filepath = server_dir .. string.sub(filepath, instance_server_pwt_str_index+string.len(pwt_server_actual_dir))
-
-		elseif (instance_client_xen_str_index) then
-			abs_filepath = client_dir .. string.sub(filepath, instance_client_xen_str_index+string.len(xen_client_actual_dir))
-
-		elseif (instance_server_xen_str_index) then
-			abs_filepath = server_dir .. string.sub(filepath, instance_server_xen_str_index+string.len(xen_server_actual_dir))
-
-		else
-			abs_filepath = filepath
+		if not (in_instance_client or in_instance_server or in_nifty) then
+			return
 		end
 
-		local cmd = abs_path .. nifty_path .. 'buildit/buildit file '  .. abs_filepath
+
+		local cmd = nifty_dir .. 'builditsrc/run_buildit file ' .. filepath
 
 		vim.fn.jobstart(cmd, {
 			on_exit = function()
@@ -690,8 +724,10 @@ vim.api.nvim_create_autocmd("BufWritePost", {
 			on_stdout = append_data,
 			on_stderr = append_data
 		})
+		--]]
 	end
 })
+
 
 
 

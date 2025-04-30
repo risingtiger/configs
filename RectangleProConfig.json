@@ -1,6 +1,9 @@
 {
   "bundleId" : "com.knollsoft.Hookshot",
   "defaults" : {
+    "SUEnableAutomaticChecks" : {
+      "bool" : false
+    },
     "adjacentResizeScreenEdge" : {
       "int" : 0
     },
@@ -16,14 +19,14 @@
     "almostMaximizeWidth" : {
       "float" : 0
     },
+    "altThirdCycle" : {
+      "int" : 0
+    },
     "alternateDefaultShortcuts" : {
       "bool" : false
     },
     "alternateGestureShortcuts" : {
       "bool" : false
-    },
-    "altThirdCycle" : {
-      "int" : 0
     },
     "alwaysAccountForStage" : {
       "int" : 0
@@ -34,11 +37,14 @@
     "analogAdjacentResizing" : {
       "int" : 0
     },
-    "applyGapToEdges" : {
+    "appLayoutsHideOtherApps" : {
       "int" : 0
     },
     "appSpecs" : {
-      "string" : "[{\"id\":1,\"name\":\"Main \",\"isGroup\":true,\"loc\":0}]"
+      "string" : "[{\"id\":1,\"loc\":0,\"isGroup\":true,\"name\":\"Main \"},{\"id\":3,\"loc\":0,\"isGroup\":true,\"children\":[{\"y\":\"0\",\"h\":\"1079\",\"id\":4,\"displayFrame\":[[0,0],[1728,1117]],\"display\":-3,\"bundleId\":\"com.mitchellh.ghostty\",\"x\":\"0\",\"title\":\"fAl6a9Da9CngnOwwHSP\\\/qLzEeFSsRmfTxYVUt0GuJ\\\/p+5hGlJw==\",\"w\":\"1728\",\"loc\":9},{\"displayFrame\":[[0,0],[1728,1117]],\"w\":\"864\",\"display\":-3,\"y\":\"0\",\"loc\":9,\"x\":\"864\",\"title\":\"5pDl\\\/FGZMqGaUcS1jXknQj7cr7OqqWoH79mWBqtWxd4=\",\"bundleId\":\"com.apple.finder\",\"h\":\"1079\",\"id\":5}],\"name\":\"Layout 1\"}]"
+    },
+    "applyGapToEdges" : {
+      "int" : 0
     },
     "attemptMatchOnNextPrevDisplay" : {
       "int" : 0
@@ -52,10 +58,10 @@
     "cascadeWidth" : {
       "int" : 0
     },
-    "centeredDirectionalMove" : {
+    "centerHalfCycles" : {
       "int" : 0
     },
-    "centerHalfCycles" : {
+    "centeredDirectionalMove" : {
       "int" : 0
     },
     "checkAnimationUnsnap" : {
@@ -74,7 +80,7 @@
       "int" : 0
     },
     "contextMenuShortcut" : {
-
+      "string" : "null"
     },
     "cornerSnapAreaSize" : {
       "float" : 20
@@ -90,6 +96,9 @@
     },
     "disabledApps" : {
 
+    },
+    "dockSizePollSeconds" : {
+      "double" : 0
     },
     "doubleClickTitleBar" : {
       "int" : 0
@@ -197,10 +206,10 @@
 
     },
     "minimumWindowHeight" : {
-      "float" : 0.25
+      "float" : 0.1
     },
     "minimumWindowWidth" : {
-      "float" : 0.25
+      "float" : 0.1
     },
     "missionControlDragging" : {
       "int" : 0
@@ -238,6 +247,9 @@
     "performRepeatOnThrow" : {
       "int" : 0
     },
+    "portraitLeftRightIsTopBottom" : {
+      "int" : 0
+    },
     "portraitSnapAreas" : {
 
     },
@@ -247,11 +259,11 @@
     "quickActionMinDist" : {
       "float" : 10
     },
-    "quickActions" : {
-      "int" : 0
-    },
     "quickActionTimeout" : {
       "double" : 1
+    },
+    "quickActions" : {
+      "int" : 0
     },
     "relaunchOpensMenu" : {
       "bool" : false
@@ -262,17 +274,17 @@
     "resizeOnDirectionalMove" : {
       "bool" : false
     },
-    "restartOnWakeDelay" : {
-      "float" : 0
-    },
     "restToOneTouches" : {
       "int" : 0
+    },
+    "restartOnWakeDelay" : {
+      "float" : 0
     },
     "reticle" : {
       "int" : 2
     },
     "reticleColor" : {
-      "string" : "{\"blue\":0.2,\"red\":0.8,\"green\":0.3,\"alpha\":0.5}"
+      "string" : "{\"green\":0.3,\"alpha\":0.5,\"red\":0.8,\"blue\":0.2}"
     },
     "reticleDisplayMinDist" : {
       "float" : 0
@@ -290,7 +302,7 @@
       "int" : 35
     },
     "saveLayoutShortcut" : {
-
+      "string" : "null"
     },
     "screenEdgeGapBottom" : {
       "float" : 0
@@ -301,14 +313,14 @@
     "screenEdgeGapRight" : {
       "float" : 0
     },
-    "screenEdgeGapsOnMainScreenOnly" : {
-      "bool" : false
-    },
     "screenEdgeGapTop" : {
       "float" : 0
     },
     "screenEdgeGapTopNotch" : {
       "float" : 0
+    },
+    "screenEdgeGapsOnMainScreenOnly" : {
+      "bool" : false
     },
     "scrollEdgePauseDistance" : {
       "float" : 60
@@ -367,10 +379,10 @@
     "stashAnimation" : {
       "int" : 0
     },
-    "stashClearedByOtherActions" : {
+    "stashClearScreenEdge" : {
       "int" : 0
     },
-    "stashClearScreenEdge" : {
+    "stashClearedByOtherActions" : {
       "int" : 0
     },
     "stashCursorBoxWidth" : {
@@ -409,9 +421,6 @@
     "subsequentExecutionMode" : {
       "int" : 0
     },
-    "SUEnableAutomaticChecks" : {
-      "bool" : false
-    },
     "systemWideMouseDown" : {
       "int" : 0
     },
@@ -443,9 +452,12 @@
       "float" : 400
     },
     "togggleTodoShortcut" : {
-
+      "string" : "null"
     },
     "traverseSingleScreen" : {
+      "int" : 0
+    },
+    "unhideStashToOriginal" : {
       "int" : 0
     },
     "unhideStashedWhenFrontmost" : {
@@ -463,16 +475,22 @@
     "winDownDefaultAction" : {
       "int" : 0
     },
+    "winModFlags" : {
+      "int" : 0
+    },
+    "windowPollSeconds" : {
+      "double" : 0.5
+    },
     "windowSnapping" : {
       "int" : 0
     },
     "windowStopVelocity" : {
       "float" : 3
     },
-    "windowToFront" : {
+    "windowThrowIgnoresWidgets" : {
       "int" : 0
     },
-    "winModFlags" : {
+    "windowToFront" : {
       "int" : 0
     }
   },
@@ -526,6 +544,6 @@
       "modifierFlags" : 786432
     }
   },
-  "timestamp" : 753065862.529375,
-  "version" : "178"
+  "timestamp" : 767733817.774224,
+  "version" : "187"
 }

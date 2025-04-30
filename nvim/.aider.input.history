@@ -1,0 +1,153 @@
+
+# 2025-01-15 11:18:41.742000
++/model o1-preview
+
+# 2025-01-15 11:19:30.176617
++N
+
+# 2025-01-15 11:19:32.563838
++/exit
+
+# 2025-01-15 14:54:49.894911
++N
+
+# 2025-01-15 14:54:52.981266
++/exit
+
+# 2025-01-15 14:55:03.332988
++N
+
+# 2025-01-15 14:55:06.772632
++/exit
+
+# 2025-01-15 15:08:25.408614
++N
+
+# 2025-01-15 15:12:52.308096
++after line 30, set a local variable called filetype. Set it to 'client' if local f path contains nifty/client. Set it to 'server' if path contains nifty/server
+
+# 2025-01-15 15:22:33.261320
++/exit
+
+# 2025-01-15 15:38:18.625897
++N
+
+# 2025-01-15 15:39:12.725223
++modify line at 31. Add further testing cases. If 'nifty/client' as well as 'xenclient' as well as 'pwtclient', set to client
+
+# 2025-01-15 15:39:27.045980
++/exit
+
+# 2025-01-15 15:40:09.807167
++N
+
+# 2025-01-15 15:41:43.959817
++modify line 31. Remove test for server. Change filetype local variable to is_client. Then create a new local variable called is_server, which tests for 'nifty/server' or 'xenserver' or 'pwtserver'. Modify the logic to use is_client or is_server instead of filetype
+
+# 2025-01-15 15:42:04.060779
++/exit
+
+# 2025-01-15 17:21:28.163449
++N
+
+# 2025-01-15 17:22:26.250367
++line 33, create a local variable called is_component and test for 'lazy/components' or 'lazy/views'
+
+# 2025-01-15 17:22:35.398629
++/exit
+
+# 2025-01-15 22:14:46.404566
++N
+
+# 2025-01-15 22:15:45.836665
++on line 691, test if filepath contains instance_client_dir or instance_server_dir or nifty_dir
+
+# 2025-01-15 22:16:06.000064
++/exit
+
+# 2025-04-29 12:07:10.946647
++:q
+
+# 2025-04-29 12:07:13.073130
++N
+
+# 2025-04-29 12:07:16.660104
++/exit
+
+# 2025-04-29 12:10:39.576532
++N
+
+# 2025-04-29 12:10:41.644136
++/exit
+
+# 2025-04-29 12:12:32.207192
++N
+
+# 2025-04-29 12:12:34.425956
++/exit
+
+# 2025-04-29 12:13:44.878369
++N
+
+# 2025-04-29 12:13:51.022309
++/exit
+
+# 2025-04-29 12:16:45.441491
++N
+
+# 2025-04-29 12:16:47.671263
++/exit
+
+# 2025-04-29 12:17:07.760876
++N
+
+# 2025-04-29 12:17:10.166965
++/exit
+
+# 2025-04-29 12:36:00.695207
++N
+
+# 2025-04-29 12:36:20.067344
++/exit
+
+# 2025-04-29 12:36:22.866960
++:q
+
+# 2025-04-29 12:36:29.116311
++/exit
+
+# 2025-04-29 12:36:38.838015
++N
+
+# 2025-04-29 12:36:46.689136
++/add /Users/dave/.config/nvim/init.lua
+
+# 2025-04-29 12:37:59.996780
++/exit
+
+# 2025-04-29 12:39:50.847095
++N
+
+# 2025-04-29 12:41:32.194289
++/exit
+
+# 2025-04-29 12:44:54.305048
++/add /Users/dave/.config/nvim/init.lua
+
+# 2025-04-29 12:45:04.673632
++N
+
+# 2025-04-29 12:45:06.906171
++/exit
+
+# 2025-04-29 13:28:12.942241
++N
+
+# 2025-04-29 13:28:32.993312
++/exit
+
+# 2025-04-30 12:37:28.954470
++N
+
+# 2025-04-30 12:38:59.168821
++/exit
