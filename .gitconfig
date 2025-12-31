@@ -1,0 +1,24 @@
+[user]
+name = Davis Hammon
+	email = accounts@risingtiger.com
+
+[difftool]
+    prompt = true
+[diff]
+    tool = nvimdiff
+	external = difft
+[difftool "nvimdiff"]
+    cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+
+[merge]
+  tool = diffview
+[mergetool]
+  prompt = false
+  keepBackup = false
+[mergetool "diffview"]
+  cmd = nvim -n -c "DiffviewOpen" "$MERGE"
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
