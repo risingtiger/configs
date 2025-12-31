@@ -12,6 +12,7 @@ brew install eza
 brew install fd
 brew install ffmpeg
 brew install font-symbols-only-nerd-font
+brew install fnm
 brew install fzf
 brew install git
 brew install imagemagick
