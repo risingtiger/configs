@@ -8,9 +8,17 @@ local client_subfolder = "assets/"
 
 
 
+local append_data = function(_, data)
+	data = table.concat(data, '\n')
+	print(data)
+end
+
+
+
+
 local function trigger_copy_chrome_css_changes()
 
-	local cmd = abs_path .. nifty_path .. 'builditsrc/run_buildit copy_chrome_css_changes '
+	local cmd = '/Users/dave/Code/niftybuild_run copy_chrome_css_changes '
 
 	vim.fn.jobstart(cmd, {
 		on_exit = function()
@@ -23,87 +31,19 @@ local function trigger_copy_chrome_css_changes()
 end
 
 
+local function switch_component_file(file_extension)
+	local current_file = vim.api.nvim_buf_get_name(0)
 
+	-- Check if the file is in lazy/views or lazy/components directories
+	if string.find(current_file, "lazy/views") or string.find(current_file, "lazy/components") then
+		-- Get the file name without extension
+		local basename = vim.fn.fnamemodify(current_file, ":r")
+		local target_file = basename .. "." .. file_extension
 
-local function aideron_add_current_buffer(isarchitect)
-
-	local api = require("nvim_aider").api
-	api.add_current_file()
-
-	-- local f = vim.api.nvim_buf_get_name(0)
-	--
-	-- local cmdstr = "vsplit | term /Users/dave/Code/aider/aider_run "
-	--
-	-- if isarchitect then
-	-- 	cmdstr = cmdstr .. "-a "
-	-- end
-	--
-	-- cmdstr = cmdstr .. f
-	-- vim.cmd(cmdstr)
+		-- Open the corresponding file with the specified extension
+		vim.cmd("edit " .. target_file)
+	end
 end
-
-
-local function aideron_read_conventions(conventionfilename)
-	print("aideron_read_conventions " .. conventionfilename)
-	local api = require("nvim_aider").api
-    api.add_read_only_file("/Users/dave/Code/aider/conventions/" .. conventionfilename .. ".md")
-
-
-	-- local f = vim.api.nvim_buf_get_name(0)
-	-- if string.find(f, "nifty/client") or string.find(f, "xenclient") or string.find(f, "pwtclient") then
-	-- 	api.add_read_only_file("/Users/dave/Code/aider/conventions/CONVENTION_CLIENT.md")
-	--    end
-	--
-	-- if string.find(f, "nifty/server") or string.find(f, "xenserver") or string.find(f, "pwtserver") then
-	-- 	api.add_read_only_file("/Users/dave/Code/aider/conventions/CONVENTION_SERVER.md")
-	--    end
-	--
-	-- if string.find(f, "lazy/components") or string.find(f, "lazy/views") then
-	-- 	api.add_read_only_file("/Users/dave/Code/aider/conventions/CONVENTION_CLIENT_COMPONENT.md")
-	--    end
-end
-
-local function aideron_toggle()
-
-	local api = require("nvim_aider").api
-	api.toggle_terminal()
-
-	-- local f = vim.api.nvim_buf_get_name(0)
-	--
-	-- local cmdstr = "vsplit | term /Users/dave/Code/aider/aider_run "
-	--
-	-- if isarchitect then
-	-- 	cmdstr = cmdstr .. "-a "
-	-- end
-	--
-	-- cmdstr = cmdstr .. f
-	-- vim.cmd(cmdstr)
-end
-
-
-
-vim.keymap.set("n", "GA", function()
-	aideron_toggle()
-end, { desc = "Aider Toggle" })
-
-vim.keymap.set("n", "GARC", function()
-	aideron_read_conventions("CONVENTION_CLIENT")
-end, { desc = "Aider Add Convention Client files" })
-vim.keymap.set("n", "GARCC", function()
-	aideron_read_conventions("CONVENTION_CLIENT_COMPONENT")
-end, { desc = "Aider Add Convention Client Component files" })
-vim.keymap.set("n", "GARS", function()
-	aideron_read_conventions("CONVENTION_SERVER")
-end, { desc = "Aider Add Convention Server files" })
-
-vim.keymap.set("n", "GAJ", function()
-	aideron_add_current_buffer()
-end, { desc = "Start a standard aider REPL" })
-
-vim.keymap.set("n", "GAA", function()
-	aideron(true)
-end, { desc = "Start a architect aider REPL" })
-
 
 
 
@@ -149,6 +89,14 @@ vim.opt.foldnestmax = 4
 vim.opt.title = false
 vim.opt.wrap = false
 
+-- Enable wrap for markdown files only
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function()
+    vim.opt_local.wrap = true
+  end,
+})
+
 vim.opt.cursorline = true
 
 vim.opt.scrolloff = 2
@@ -160,6 +108,7 @@ vim.opt.splitbelow = true
 
 --vim.opt.termguicolors = true
 
+
 vim.keymap.set("n", "<leader>t", "<cmd>tabn<CR>")
 vim.keymap.set("n", "<leader>T", "<cmd>tabp<CR>")
 
@@ -170,6 +119,12 @@ vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "[Q]uickfix
 
 vim.keymap.set("n", "<leader>w", "<cmd>cp<CR>")
 vim.keymap.set("n", "<leader>e", "<cmd>cn<CR>")
+
+
+vim.keymap.set("n", "<leader>aj", function() switch_component_file("ts") end, { desc = "Switch to component .ts file" })
+vim.keymap.set("n", "<leader>ak", function() switch_component_file("html") end, { desc = "Switch to component .html file" })
+vim.keymap.set("n", "<leader>al", function() switch_component_file("css") end, { desc = "Switch to component .css file" })
+vim.keymap.set("n", "<leader>a;", function() vim.cmd("LspClangdSwitchSourceHeader") end, { desc = "Toggle C Header Files" })
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "*",
@@ -194,18 +149,15 @@ vim.keymap.set("n", "<leader>c", function()
 	trigger_copy_chrome_css_changes()
 end, { desc = "[C]ss update" })
 
-vim.keymap.set("n", "GQ", function()
-	vim.cmd("ClangdSwitchSourceHeader")
-end, { desc = "Toggle C Header File" })
-
 map("x", "p", "P")
 
 
 
---[[
+vim.keymap.set('i', '<C-J>', 'copilot#Accept("\\<CR>")', {
+  expr = true,
+  replace_keycodes = false
+})
 vim.g.copilot_no_tab_map = true
-vim.api.nvim_set_keymap("i", "<C-J>", 'copilot#Accept("<CR>")', { silent = true, expr = true })
---]]
 
 
 vim.keymap.set("n", "GF", function()
@@ -250,7 +202,7 @@ require("lazy").setup({
 			pcall(require("telescope").load_extension, "ui-select")
 
 			local builtin = require("telescope.builtin")
-			vim.keymap.set("n", "gh", builtin.find_files, { desc = "[S]earch [F]iles" })
+			vim.keymap.set("n", "gf", builtin.find_files, { desc = "[S]earch [F]iles" })
 			vim.keymap.set("n", "GT", builtin.builtin, { desc = "[S]earch [S]elect Telescope" })
 			vim.keymap.set("n", "gs", builtin.grep_string, { desc = "[S]earch current [W]ord" })
 			-- vim.keymap.set("n", "gh", builtin.jumplist, { desc = "[S]earch [J]ump list" })
@@ -259,7 +211,7 @@ require("lazy").setup({
 			vim.keymap.set("n", "<leader>dd", builtin.diagnostics, { desc = "[D]iagnostics all" })
 			--vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
 			--vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
-			vim.keymap.set("n", "<leader>b", builtin.buffers, { desc = "[ ] Find existing buffers" })
+			vim.keymap.set("n", "gh", builtin.buffers, { desc = "[ ] Find existing buffers" })
 
 			vim.keymap.set("n", "<leader>s", function()
 				-- You can pass additional configuration to Telescope to change the theme, layout, etc.
@@ -451,7 +403,15 @@ require("lazy").setup({
 		"folke/todo-comments.nvim",
 		event = "InsertEnter",
 		dependencies = { "nvim-lua/plenary.nvim" },
-		opts = { signs = false },
+		opts = {
+			signs = false,
+			-- colors = {
+			-- 	info = { "DiagnosticInfo", "#bfbfbf" },
+			-- },
+			highlight = {
+				keyword = "fg", -- "fg", "bg", "wide", "wide_bg", "wide_fg" or empty. (wide and wide_bg is the same as bg, but will also highlight surrounding characters, wide_fg acts accordingly but with fg)
+			},
+		},
 	},
 
 	{
@@ -540,6 +500,14 @@ require("lazy").setup({
 
 	{
 		"sindrets/diffview.nvim",
+		config = function()
+			require('diffview').setup {
+				keymaps = {
+					view = {
+					}
+				},
+			}
+		end
 	},
 
 	{
@@ -565,7 +533,7 @@ require("lazy").setup({
 		"mfussenegger/nvim-lint",
 		keys = {
 			{
-				"<leader>l",
+				"<leader>pl",
 				function()
 					require("lint").try_lint()
 				end,
@@ -586,7 +554,7 @@ require("lazy").setup({
 		"stevearc/conform.nvim",
 		keys = {
 			{
-				"<leader>f",
+				"<leader>pf",
 				function() require("conform").format({ async = true }) end,
 				mode = "n",
 				desc = "[F]ormat buffer",
@@ -617,9 +585,147 @@ require("lazy").setup({
 		end,
 	},
 
+	{
+		'nvim-lualine/lualine.nvim',
+		dependencies = { 'nvim-tree/nvim-web-devicons' },
+		config = function()
+			require('lualine').setup {
+				sections = {
+					lualine_x = {
+						-- {
+						-- 	require 'minuet.lualine',
+						-- 	-- the follwing is the default configuration
+						-- 	-- the name displayed in the lualine. Set to "provider", "model" or "both"
+						-- 	display_name = 'model',
+						-- 	-- separator between provider and model name for option "both"
+						-- 	-- provider_model_separator = ':',
+						-- 	-- whether show display_name when no completion requests are active
+						-- 	display_on_idle = true,
+						-- },
+						'encoding',
+						'fileformat',
+						'filetype',
+					},
+				},
+			}
+		end
+	},
 
+	{
+		"github/copilot.vim"
+	},
 
+	{
+		"NickvanDyke/opencode.nvim",
+		dependencies = {
+			-- Recommended for `ask()` and `select()`.
+			-- Required for `toggle()`.
+			---@module 'snacks' <- Loads `snacks.nvim` types for configuration intellisense.
+			{ "folke/snacks.nvim", opts = { input = {}, picker = {}, terminal = {} } },
+		},
+		config = function()
+			vim.g.opencode_opts = {
+			  -- Your configuration, if any — see `lua/opencode/config.lua`
+			}
 
+			-- Required for `vim.g.opencode_opts.auto_reload`
+			vim.opt.autoread = true
+
+			-- Recommended/example keymaps
+			vim.keymap.set({ "n", "x" }, "<leader>oa", function() require("opencode").ask("@this: ", { submit = true }) end, { desc = "Ask about this" })
+			vim.keymap.set({ "n", "x" }, "<leader>os", function() require("opencode").select() end, { desc = "Select prompt" })
+			vim.keymap.set({ "n", "x" }, "<leader>o+", function() require("opencode").prompt("@this") end, { desc = "Add this" })
+			vim.keymap.set("n", "<leader>ot", function() require("opencode").toggle() end, { desc = "Toggle embedded" })
+			vim.keymap.set("n", "<leader>oc", function() require("opencode").command() end, { desc = "Select command" })
+			vim.keymap.set("n", "<leader>on", function() require("opencode").command("session_new") end, { desc = "New session" })
+			vim.keymap.set("n", "<leader>oi", function() require("opencode").command("session_interrupt") end, { desc = "Interrupt session" })
+			vim.keymap.set("n", "<leader>oA", function() require("opencode").command("agent_cycle") end, { desc = "Cycle selected agent" })
+			-- vim.keymap.set("n", "<S-C-u>",    function() require("opencode").command("messages_half_page_up") end, { desc = "Messages half page up" })
+			-- vim.keymap.set("n", "<S-C-d>",    function() require("opencode").command("messages_half_page_down") end, { desc = "Messages half page down" })
+		end,
+	}
+
+	--[[	
+    {
+        'milanglacier/minuet-ai.nvim',
+        config = function()
+            require('minuet').setup {
+				provider = 'gemini',
+				model = "gemini-2.0-flash",
+				virtualtext = {
+					auto_trigger_ft = { 'javascript', 'typescript', 'lua' },
+					keymap = {
+						-- accept whole completion
+						accept = '<C-j>',
+						-- accept one line
+						-- accept_line = '<A-a>',
+						-- accept n lines (prompts for number)
+						-- e.g. "A-z 2 CR" will accept 2 lines
+						-- accept_n_lines = '<A-z>',
+						next = '<M-]>',
+						prev = '<M-[>',
+						dismiss = '<C-]>',
+					},
+				},
+				presets = {
+					openai = {
+						provider = "openai",
+						provider_options = {
+
+							model = 'gpt-4.1-mini',
+							chat_input = "See [Prompt Section for default value]",
+							stream = true,
+							api_key = 'OPENAI_API_KEY',
+							optional = {
+							-- pass any additional parameters you want to send to OpenAI request,
+							-- e.g.
+							-- stop = { 'end' },
+							-- max_tokens = 256,
+							-- top_p = 0.9,
+							-- reasoning_effort = 'minimal'
+							},
+						}
+					},
+					gemini = {
+						provider = 'gemini',
+						context_window = 5000,
+						provider_options = {
+							gemini = {
+								model = "gemini-2.0-flash",
+								generationConfig = {
+									maxOutputTokens = 256,
+									thinkingConfig = {
+										thinkingBudget = 0,
+									},
+								},
+								safetySettings = {
+									{
+										category = 'HARM_CATEGORY_DANGEROUS_CONTENT',
+										threshold = 'BLOCK_ONLY_HIGH',
+									},
+								},
+							}
+						}
+					},
+					sonnet = {
+						provider = 'claude',
+						context_window = 100000,
+						request_timeout = 4,
+						throttle = 4000,
+						debounce = 2000,
+						provider_options = {
+							claude = {
+								model = "claude-sonnet-4-20250514"
+							}
+						}
+					}
+				}
+            }
+        end,
+    },
+	--]]
+
+	--[[
 	{
 		"zbirenbaum/copilot.lua",
 		cmd = "Copilot",
@@ -645,44 +751,9 @@ require("lazy").setup({
 			})
 		end,
 	},
-
-
-
-
-	{
-		"GeorgesAlkhouri/nvim-aider",
-		event = "InsertEnter",
-		cmd = "Aider",
-		-- Example key mappings for common actions:
-		keys = {
-			--[[
-		  { "<leader>a/", "<cmd>Aider toggle<cr>", desc = "Toggle Aider" },
-		  { "<leader>as", "<cmd>Aider send<cr>", desc = "Send to Aider", mode = { "n", "v" } },
-		  { "<leader>ac", "<cmd>Aider command<cr>", desc = "Aider Commands" },
-		  { "<leader>ab", "<cmd>Aider buffer<cr>", desc = "Send Buffer" },
-		  { "<leader>a+", "<cmd>Aider add<cr>", desc = "Add File" },
-		  { "<leader>a-", "<cmd>Aider drop<cr>", desc = "Drop File" },
-		  { "<leader>ar", "<cmd>Aider add readonly<cr>", desc = "Add Read-Only" },
-		  -- Example nvim-tree.lua integration if needed
-		  { "<leader>a+", "<cmd>AiderTreeAddFile<cr>", desc = "Add File from Tree to Aider", ft = "NvimTree" },
-		  { "<leader>a-", "<cmd>AiderTreeDropFile<cr>", desc = "Drop File from Tree from Aider", ft = "NvimTree" },
-		  --]]
-		},
-		dependencies = {
-			"folke/snacks.nvim",
-		},
-		config = function()
-			require("nvim_aider").setup({
-				aider_cmd = "aider",
-				args = {
-					"--no-auto-commits",
-					"--vim",
-					"--watch-files"
-				},
-			})
-		end
-	  },
+	--]]
 })
+
 
 
 
@@ -690,32 +761,27 @@ require("lazy").setup({
 vim.api.nvim_create_autocmd("BufWritePost", {
 	callback = function()
 
-		local append_data = function(_, data)
-			data = table.concat(data, '\n')
-			print(data)
-		end
-
 		local filepath = vim.api.nvim_buf_get_name(0)
 
 		local instance_name = os.getenv("NIFTY_INSTANCE") or ""
-		local nifty_dir     = os.getenv("NIFTY_DIR") or ""
+		local niftyclient_dir = os.getenv("NIFTYCLIENT_DIR") or ""
+		local niftyserver_dir = os.getenv("NIFTYSERVER_DIR") or ""
 
 		local instance_client_dir = instance_name == "pwt" and ( os.getenv("NIFTY_INSTANCE_PWT_CLIENT_DIR") or "" ) or ( os.getenv("NIFTY_INSTANCE_XEN_CLIENT_DIR") or "" )
 		local instance_server_dir = instance_name == "pwt" and ( os.getenv("NIFTY_INSTANCE_PWT_SERVER_DIR") or "" ) or ( os.getenv("NIFTY_INSTANCE_XEN_SERVER_DIR") or "" )
 
-		local client_dir = os.getenv("NIFTY_INSTANCE_CLIENT_DIR") or ""
-		local server_dir = os.getenv("NIFTY_INSTANCE_SERVER_DIR") or ""
-
 		local in_instance_client = string.find(filepath, instance_client_dir)
 		local in_instance_server = string.find(filepath, instance_server_dir)
-		local in_nifty = string.find(filepath, nifty_dir)
+		local in_niftyclient = string.find(filepath, niftyclient_dir)
+		local in_niftyserver = string.find(filepath, niftyserver_dir)
 
-		if not (in_instance_client or in_instance_server or in_nifty) then
+		if not (in_instance_client or in_instance_server or in_niftyclient or in_niftyserver) then
 			return
 		end
 
 
-		local cmd = nifty_dir .. 'builditsrc/run_buildit file ' .. filepath
+		local cmd = '/Users/dave/Code/niftybuild_run file ' .. filepath
+
 
 		vim.fn.jobstart(cmd, {
 			on_exit = function()

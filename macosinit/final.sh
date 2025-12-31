@@ -1,28 +1,20 @@
 #!/bin/bash 
 
 
-fnm install 20
+fnm install 24
 
 $(brew --prefix)/opt/fzf/install
 
 
-npm install --global particle-cli
-npm install --global @swc/cli
-npm install --global @swc/core
+npm install --g particle-cli
+npm install --g typescript
 
 cp -r ~/Desktop/ssh ~/.ssh
-cp -r ~/Desktop/configs/ghostty ~/.config/ghostty
-cp -r ~/Desktop/configs/karabiner ~/.config/karabiner
-cp -r ~/Desktop/configs/nnn ~/.config/nnn
-cp -r ~/Desktop/configs/nvim ~/.config/nvim
-cp -r ~/Desktop/configs/RectangleProConfig ~/.config/RectangleProConfig
-cp -r ~/Desktop/configs/ignore ~/.ignore
-cp -r ~/Desktop/configs/gitconfig ~/.gitconfig
-cp -r ~/Desktop/configs/zprofile ~/.zprofile
-cp -r ~/Desktop/configs/zshrc ~/.zshrc
-cp -r ~/Desktop/configs/aider.conf.yml ~/.aider.conf.yml
+cp -r ~/Desktop/zprofile ~/.zprofile
+
+cp -r ~/Desktop/configs/ghostty ~/Desktop/configs/karabiner ~/Desktop/configs/nvim ~/Desktop/configs/opencode ~/.
+
+cp -r ~/Desktop/configs/.fzf.bash ~/Desktop/configs/.gitconfig ~/Desktop/configs/.gitignore ~/Desktop/configs/.ignore ~/Desktop/configs/.nifty  ~/Desktop/configs/.zshrc ~/.
 
 sh -c "$(curl -Ls https://raw.githubusercontent.com/jarun/nnn/master/plugins/getplugs)"
 
-python -m pip install aider-install
-aider-install

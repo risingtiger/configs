@@ -151,3 +151,15 @@
 
 # 2025-04-30 12:38:59.168821
 +/exit
+
+# 2025-05-08 09:29:01.055454
++N
+
+# 2025-05-08 09:29:05.928775
++/add init.lua
+
+# 2025-05-08 09:29:52.586651
++modify the config file. this is for Neovim. I want to keep wrap to false for all files except markdown files. For markdown files I want wrap to be true
+
+# 2025-05-08 09:30:15.707907
++/exit
